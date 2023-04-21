@@ -1,0 +1,106 @@
+#:import sm kivy.uix.screenmanager
+ScreenManager:
+    id:manager
+    transition:sm.FadeTransition(duration=.0)
+    MDScreen:
+        name:'home'
+        FloatLayout:
+            orientation:'vertical'
+            Front:
+                pos_hint:{'center_x':.5, 'center_y':.7}
+                on_release:
+                    app.screen_capture("check")
+                MDIcon:
+                    icon:"wifi-remove"
+                    halign:"center"
+                    font_size:"70sp"
+
+            MDLabel:
+                halign:"center"
+                font_size:"21sp"
+                text:"SIMS Status"
+                font_name:"components/fonts/Gill Sans.otf"
+                pos_hint:{'center_x':.5, 'center_y':.59}
+            Front:
+                pos_hint:{'center_x':.5, 'center_y':.4}
+                on_release:
+                    app.screen_capture("login")
+                MDIcon:
+                    icon:"login"
+                    halign:"center"
+                    font_size:"70sp"
+
+            MDLabel:
+                halign:"center"
+                font_size:"21sp"
+                text:"Login to SIMS"
+                pos_hint:{'center_x':.5, 'center_y':.29}
+                font_name:"components/fonts/Gill Sans.otf"
+
+    MDScreen:
+        name:"check"
+        FloatLayout:
+            Front:
+                id:valid
+                size:app.size_x/3,app.size_y/20.9
+                pos_hint:{'center_x':1.5, 'center_y':.9}
+                md_bg_color: 1,1,1,1
+
+                MDLabel:
+                    halign:"center"
+                    text:app.status
+                    theme_text_color: "Custom"
+                    text_color: 0, .5, 0, 1
+                    font_name:"components/fonts/Gill Sans.otf"
+
+            Front:
+                id:back_leash
+                size:app.size_x/1.4,app.size_y/1.9
+                pos_hint:{'center_x':.5, 'center_y':.5}
+                md_bg_color:.8, .8, .8, .7
+            Front:
+                size:app.size_x/1.5,app.size_y/2
+                pos_hint:{'center_x':.5, 'center_y':.5}
+                on_release:
+                    app.ping_sims()
+                    valid.pos_hint = {'center_x':.5, 'center_y':.85}
+                MDIcon:
+                    id:status_icon
+                    icon:"wifi-alert"
+                    halign:"center"
+                    font_size:"170sp"
+                    theme_text_color: "Custom"
+                    text_color: .75, .75, .75, 1
+
+
+    MDScreen:
+        name:"login"
+        FloatLayout:
+            MDLabel:
+                halign:"center"
+                text:"Welcome to bla bla bla"
+                pos_hint:{"center_x":.5, "center_y":.9}
+
+            MDLabel:
+                halign:"center"
+                text:app.status
+                pos_hint:{"center_x":.5, "center_y":.75}
+
+            MDRaisedButton:
+                halign:"center"
+                text:"Check SIMS Connection"
+                pos_hint:{"center_x":.5, "center_y":.65}
+                on_release:
+                    app.ping_sims
+
+
+
+<Front@MDCard>:
+    radius:20
+    #height:240
+    elevation:9
+    size_hint:None, None
+    size:app.size_x/3,app.size_y/6
+    md_bg_color:80 / 225, 136 / 225, 225 / 225, 1
+    adaptive_height:True
+    adaptive_width:True
