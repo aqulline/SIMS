@@ -1,5 +1,5 @@
 from kivy.base import EventLoop
-from kivy.properties import StringProperty, NumericProperty
+from kivy.properties import StringProperty, NumericProperty, BooleanProperty
 from kivymd.app import MDApp
 from kivy.core.window import Window
 from kivy.clock import Clock
@@ -25,6 +25,7 @@ class MainApp(MDApp):
     size_x, size_y = Window.size
 
     status = StringProperty("")
+    state = BooleanProperty(False)
 
     def on_start(self):
         self.keyboard_hooker()
@@ -51,8 +52,12 @@ class MainApp(MDApp):
         pass
 
     def run_sims(self):
-        from web import WebView as WV
-        WV.create_webview()
+
+        if self.state:
+            from web import WebViews as WV
+            Clock.schedule_once(WV.create_webview, 0)
+        else:
+            toast("check the Sims status first")
 
     def ping_sims(self):
         import requests
@@ -67,6 +72,8 @@ class MainApp(MDApp):
                 icon.icon = "wifi"
                 icon.text_color = 0, 1, 0, .7
                 leash.md_bg_color = 0, 1, 0, .7
+
+                self.state = True
 
             else:
                 self.status = "Not Available"
