@@ -1,4 +1,5 @@
 #:import sm kivy.uix.screenmanager
+#:import orientation plyer.orientation
 ScreenManager:
     id:manager
     transition:sm.FadeTransition(duration=.0)
@@ -6,6 +7,12 @@ ScreenManager:
         name:'home'
         FloatLayout:
             orientation:'vertical'
+            MDIconButton:
+                icon:"segment"
+                pos_hint:{"center_x":.9,"center_y":.95}
+                user_font_size:"35sp"
+                on_release:
+                    app.screen_capture("select")
             Front:
                 pos_hint:{'center_x':.5, 'center_y':.7}
                 on_release:
@@ -24,12 +31,12 @@ ScreenManager:
             Front:
                 pos_hint:{'center_x':.5, 'center_y':.4}
                 on_release:
+                    orientation.set_sensor(mode='any')
                     app.run_sims()
                 MDIcon:
                     icon:"login"
                     halign:"center"
                     font_size:"70sp"
-
 
             MDLabel:
                 halign:"center"
@@ -63,7 +70,7 @@ ScreenManager:
                 size:app.size_x/1.5,app.size_y/2
                 pos_hint:{'center_x':.5, 'center_y':.5}
                 on_release:
-                    app.ping_sims()
+                    app.wait_ping()
                     valid.pos_hint = {'center_x':.5, 'center_y':.85}
                 MDIcon:
                     id:status_icon
@@ -72,6 +79,67 @@ ScreenManager:
                     font_size:"170sp"
                     theme_text_color: "Custom"
                     text_color: .75, .75, .75, 1
+    MDScreen:
+        name:"select"
+        FloatLayout:
+            Emergency:
+                pos_hint:{ "center_y":.96}
+                MDLabel:
+                    halign:"left"
+                    text:"SELECT"
+                    pos_hint:{"center_x":.6}
+                    font_size:"18sp"
+                    font_name:"components/fonts/Gill Sans.otf"
+            Front:
+                pos_hint:{'center_x':.3, 'center_y':.7}
+                on_release:
+                    orientation.set_sensor(mode='any')
+                    app.run_create_invoice()
+                MDIcon:
+                    icon:"clipboard-edit-outline"
+                    halign:"center"
+                    font_size:"70sp"
+            MDLabel:
+                halign:"center"
+                text: "Create Invoice"
+                font_size:"21sp"
+                font_name:"components/fonts/Gill Sans.otf"
+                size_hint: .4, .06
+                pos_hint:{'center_x':.3, 'center_y':.59}
+            Front:
+                pos_hint:{'center_x':.7, 'center_y':.7}
+                on_release:
+                    orientation.set_sensor(mode='any')
+                    app.run_invoice()
+                MDIcon:
+                    icon:"format-list-checkbox"
+                    halign:"center"
+                    font_size:"70sp"
+            MDLabel:
+                halign:"center"
+                text: "Invoice List"
+                font_size:"21sp"
+                font_name:"components/fonts/Gill Sans.otf"
+                size_hint: .4, .06
+                pos_hint:{ 'center_y':.5}
+                pos_hint:{'center_x':.7, 'center_y':.59}
+            Front:
+                pos_hint:{'center_x':.5, 'center_y':.4}
+                on_release:
+                    orientation.set_sensor(mode='any')
+                    app.run_results()
+                MDIcon:
+                    icon:"clipboard-text-outline"
+                    halign:"center"
+                    font_size:"70sp"
+            MDLabel:
+                halign:"center"
+                text: "View Result"
+                font_size:"21sp"
+                font_name:"components/fonts/Gill Sans.otf"
+                size_hint: .4, .06
+                pos_hint:{'center_y':.5}
+                pos_hint:{'center_x':.5, 'center_y':.29}
 
 
     MDScreen:
@@ -94,7 +162,15 @@ ScreenManager:
                 on_release:
                     app.ping_sims
 
-
+<Emergency@MDBoxLayout>:
+    radius:9
+    adaptive_height:True
+    pos_x: .27
+    pos_y: .64
+    height:dp(65)
+    md_bg_color:214/255, 223/255, 232/255, 1
+    #pos_hint:{"center_x":.5,"top":.8}
+    orientation:"vertical"
 
 <Front@MDCard>:
     radius:20

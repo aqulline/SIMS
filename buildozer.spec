@@ -37,17 +37,17 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3, kivy==2.1.0, kivymd==0.104.2, android, pillow, sdl2_ttf==2.0.15, pyjnius, requests, openssl, urllib3, charset-normalizer, chardet, idna, jwt, cryptography, pyparsing, cachetools, pyasn1, pyasn1-modules, rsa,  protobuf, cachecontrol, requests-toolbelt,
+requirements = python3, kivy==2.1.0, kivymd==0.104.2, android, pillow, sdl2_ttf==2.0.15, pyjnius, requests, openssl, urllib3, charset-normalizer, chardet, idna, jwt, cryptography, pyparsing, cachetools, pyasn1, pyasn1-modules, rsa,  protobuf, cachecontrol, requests-toolbelt, plyer, beautifulsoup4
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
 # requirements.source.kivy = ../../kivy
 
 # (str) Presplash of the application
-#presplash.filename = %(source.dir)s/data/presplash.png
+presplash.filename = components/icons/PRESP.png
 
 # (str) Icon of the application
-#icon.filename = %(source.dir)s/data/icon.png
+icon.filename = components/icons/sim.png
 
 # (str) Supported orientation (one of landscape, sensorLandscape, portrait or all)
 orientation = portrait
@@ -80,7 +80,7 @@ fullscreen = 0
 # red, blue, green, black, white, gray, cyan, magenta, yellow, lightgray,
 # darkgray, grey, lightgrey, darkgrey, aqua, fuchsia, lime, maroon, navy,
 # olive, purple, silver, teal.
-#android.presplash_color = #FFFFFF
+android.presplash_color = #16568e
 
 # (string) Presplash animation using Lottie format.
 # see https://lottiefiles.com/ for examples and https://airbnb.design/lottie/

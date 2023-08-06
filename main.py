@@ -6,6 +6,8 @@ from kivy.clock import Clock
 from kivy import utils
 from kivymd.toast import toast
 
+from notify import NotifyResult as NS
+
 Window.keyboard_anim_args = {"d": .2, "t": "linear"}
 Window.softinput_mode = "below_target"
 Clock.max_iteration = 250
@@ -13,8 +15,6 @@ Clock.max_iteration = 250
 if utils.platform != 'android':
     Window.size = (412, 732)
 
-
-# https://sims.nit.ac.tz/index.php/view_result
 
 
 class MainApp(MDApp):
@@ -29,6 +29,7 @@ class MainApp(MDApp):
 
     def on_start(self):
         self.keyboard_hooker()
+
 
     def keyboard_hooker(self, *args):
         EventLoop.window.bind(on_keyboard=self.hook_keyboard)
@@ -55,11 +56,42 @@ class MainApp(MDApp):
 
         if self.state:
             from web import WebViews as WV
+            WV.url = 'https://sims.nit.ac.tz/index.php/dashboard'
             Clock.schedule_once(WV.create_webview, 0)
         else:
             toast("check the Sims status first")
 
-    def ping_sims(self):
+    def run_results(self):
+
+        if self.state:
+            from web import WebViews as WV
+            WV.url = 'https://sims.nit.ac.tz/index.php/view_result'
+            Clock.schedule_once(WV.create_webview, 0)
+        else:
+            toast("check the Sims status first")
+
+    def run_create_invoice(self):
+
+        if self.state:
+            from web import WebViews as WV
+            WV.url = 'https://sims.nit.ac.tz/index.php/create_invoice'
+            Clock.schedule_once(WV.create_webview, 0)
+        else:
+            toast("check the Sims status first")
+
+    def run_invoice(self):
+        if self.state:
+            from web import WebViews as WV
+            WV.url = 'https://sims.nit.ac.tz/index.php/invoice_list'
+            Clock.schedule_once(WV.create_webview, 0)
+        else:
+            toast("check the Sims status first")
+
+    def wait_ping(self):
+        toast("Wait a moment!")
+        Clock.schedule_once(self.ping_sims, .1)
+
+    def ping_sims(self, *kwargs):
         import requests
         try:
             code = requests.get("https://sims.nit.ac.tz/index.php/view_result")
@@ -75,6 +107,8 @@ class MainApp(MDApp):
 
                 self.state = True
 
+                NS.Get_data(NS())
+
             else:
                 self.status = "Not Available"
                 icon = self.root.ids.status_icon
@@ -86,8 +120,6 @@ class MainApp(MDApp):
         except:
             toast("network problem!")
             self.status = "network problem!"
-
-
 
     def screen_capture(self, screen):
         sm = self.root
