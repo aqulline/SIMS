@@ -24,8 +24,8 @@ ScreenManager:
 
             MDLabel:
                 halign:"center"
-                font_size:"21sp"
-                text:"SIMS Status"
+                font_size:"18sp"
+                text:"Check SIMS Status"
                 font_name:"components/fonts/Gill Sans.otf"
                 pos_hint:{'center_x':.5, 'center_y':.59}
             Front:
@@ -43,6 +43,54 @@ ScreenManager:
                 font_size:"21sp"
                 text:"Login to SIMS"
                 pos_hint:{'center_x':.5, 'center_y':.29}
+                font_name:"components/fonts/Gill Sans.otf"
+
+
+    MDScreen:
+        name:"results"
+        FloatLayout:
+            Emergency:
+                pos_hint:{ "center_y":.96}
+                MDLabel:
+                    halign:"left"
+                    text:"SELECT"
+                    pos_hint:{"center_x":.6}
+                    font_size:"18sp"
+                    font_name:"components/fonts/Gill Sans.otf"
+
+            Front:
+                pos_hint:{'center_x':.3, 'center_y':.65}
+                on_release:
+                    #orientation.set_sensor(mode='any')
+                    #app.run_results()
+
+                MDIcon:
+                    icon:"clipboard-text-outline"
+                    halign:"center"
+                    font_size:"70sp"
+            MDLabel:
+                halign:"center"
+                text: " View in SIMS"
+                font_size:"21sp"
+                size_hint: .4, .06
+                pos_hint:{'center_x':.3, 'center_y':.54}
+                font_name:"components/fonts/Gill Sans.otf"
+            Front:
+                pos_hint:{'center_x':.7, 'center_y':.65}
+                on_release:
+                    app.screen_capture("offline_result")
+                    app.add_ddt()
+                MDIcon:
+                    icon:"network-strength-off-outline"
+                    halign:"center"
+                    font_size:"70sp"
+            MDLabel:
+                halign:"center"
+                text: "View offline"
+                font_size:"21sp"
+                size_hint: .4, .06
+                pos_hint:{ 'center_y':.5}
+                pos_hint:{'center_x':.7, 'center_y':.54}
                 font_name:"components/fonts/Gill Sans.otf"
 
     MDScreen:
@@ -126,8 +174,7 @@ ScreenManager:
             Front:
                 pos_hint:{'center_x':.5, 'center_y':.4}
                 on_release:
-                    orientation.set_sensor(mode='any')
-                    app.run_results()
+                    app.login_check()
                 MDIcon:
                     icon:"clipboard-text-outline"
                     halign:"center"
@@ -141,26 +188,344 @@ ScreenManager:
                 pos_hint:{'center_y':.5}
                 pos_hint:{'center_x':.5, 'center_y':.29}
 
+    MDScreen:
+        name:"offline_result"
+        FloatLayout:
+            Emergency:
+                pos_hint:{ "center_y":.96}
+                orientation:"horizontal"
+                MDLabel:
+                    halign:"center"
+                    text:"Results"
+                    pos_hint:{"center_x":1, "center_y":.5}
+                    font_size:"18sp"
+                    size_hint:.1, .1
+                    font_name:"components/fonts/Gill Sans.otf"
+                    width: self.texture_size[1]
+                MDIconButton:
+                    icon:"refresh"
+                    pos_hint:{"center_x":.8}
+                    on_release:
+                        app.refresh()
+            ScrollView:
+                pos_hint:{"top":.92}
+                MDGridLayout:
+                    id: box
+                    cols: 1
+                    adaptive_height: True
+
+    MDScreen:
+        name:"all_results"
+        FloatLayout:
+            FloatLayout:
+                pos_hint:{'center_x':.5, 'center_y':.56}
+                Front:
+                    pos_hint:{'center_x':.5, 'center_y':.73}
+                    size:app.size_x/1.1,app.size_y/2.7
+                MDLabel:
+                    text:app.cos_code
+                    halign:"left"
+                    font_size:"25sp"
+                    pos_hint:{"center_x":.6, "center_y":.88}
+                    font_name:"components/fonts/Gill Sans.otf"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                MDLabel:
+                    text:"Total:"
+                    halign:"center"
+                    font_size:"20sp"
+                    pos_hint:{"center_x":.7, "center_y":.88}
+                    font_name:"components/fonts/Gill Sans.otf"
+                MDLabel:
+                    text:app.total
+                    halign:"center"
+                    font_size:"22sp"
+                    pos_hint:{"center_x":.82, "center_y":.88}
+                    font_name:"components/fonts/Gill Sans.otf"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                MDLabel:
+                    text:"Unit:"
+                    halign:"left"
+                    font_size:"20sp"
+                    pos_hint:{"center_x":.6, "center_y":.8}
+                    font_name:"components/fonts/Gill Sans.otf"
+                MDSeparator:
+                    orientation:"vertical"
+                    pos_hint:{"center_x":.5, "center_y":.73}
+                    width:".7"
+                    size_hint:None, .25
+                    color:1,1,1,1
+                MDLabel:
+                    text:app.unit
+                    halign:"left"
+                    font_size:"22sp"
+                    pos_hint:{"center_x":.73, "center_y":.8}
+                    font_name:"components/fonts/Gill Sans.otf"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                MDLabel:
+                    text:"Grade:"
+                    halign:"center"
+                    font_size:"20sp"
+                    pos_hint:{"center_x":.7, "center_y":.8}
+                    font_name:"components/fonts/Gill Sans.otf"
+                MDLabel:
+                    text:app.grade
+                    halign:"center"
+                    font_size:"22sp"
+                    pos_hint:{"center_x":.83, "center_y":.8}
+                    font_name:"components/fonts/Gill Sans.otf"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                MDLabel:
+                    text:"CA:"
+                    halign:"left"
+                    font_size:"20sp"
+                    pos_hint:{"center_x":.6, "center_y":.7}
+                    font_name:"components/fonts/Gill Sans.otf"
+                MDLabel:
+                    text:app.ca
+                    halign:"left"
+                    font_size:"22sp"
+                    pos_hint:{"center_x":.7, "center_y":.7}
+                    font_name:"components/fonts/Gill Sans.otf"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                MDLabel:
+                    text:"Point:"
+                    halign:"center"
+                    font_size:"20sp"
+                    pos_hint:{"center_x":.7, "center_y":.7}
+                    font_name:"components/fonts/Gill Sans.otf"
+                MDLabel:
+                    text:app.point
+                    halign:"center"
+                    font_size:"22sp"
+                    pos_hint:{"center_x":.82, "center_y":.7}
+                    font_name:"components/fonts/Gill Sans.otf"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                MDLabel:
+                    text:"SE:"
+                    halign:"left"
+                    font_size:"20sp"
+                    pos_hint:{"center_x":.6, "center_y":.6}
+                    font_name:"components/fonts/Gill Sans.otf"
+                MDLabel:
+                    text:app.se
+                    halign:"left"
+                    font_size:"22sp"
+                    pos_hint:{"center_x":.7, "center_y":.6}
+                    font_name:"components/fonts/Gill Sans.otf"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                MDLabel:
+                    text:"Remark:"
+                    halign:"center"
+                    font_size:"20sp"
+                    pos_hint:{"center_x":.65, "center_y":.6}
+                    font_name:"components/fonts/Gill Sans.otf"
+
+                MDLabel:
+                    text:app.remark
+                    halign:"center"
+                    font_size:"22sp"
+                    pos_hint:{"center_x":.85, "center_y":.6}
+                    font_name:"components/fonts/Gill Sans.otf"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+
+            RecycleView:
+                id:result
+                key_viewclass: 'viewclass'
+                key_size: 'height'
+                pos_hint:{"top":.58}
+                RecycleBoxLayout:
+                    id:wall
+                    spacing:dp(5)
+                    padding: dp(10)
+                    default_size: None, dp(55)
+                    default_size_hint: 1, None
+                    size_hint_y: None
+                    height: self.minimum_height
+                    orientation: 'vertical'
+
+    MDScreen:
+        name:"register_code"
+        FloatLayout:
+            Deco:
+                size: app.size_x/1.2, app.size_y/2.2
+                pos_hint:{"center_x":.5,"center_y":.6}
+            MDLabel:
+                text:"Create login pin"
+                halign:"center"
+                theme_text_color: "Custom"
+                font_style:"H4"
+                text_color:36/255, 146/255, 255/255, 1
+                pos_hint:{"center_x":.5,"center_y":.75}
+                font_name:"components/fonts/Gill Sans.otf"
+            NumberOnlyField:
+                id:pin
+                mode: "rectangle"
+                size_hint: .5, .09
+                hint_text:"Enter pin"
+                pos_hint:{'center_x':.53, 'center_y':.65}
+                font_size: dp(25)
+            NumberOnlyField:
+                id:repin
+                mode: "rectangle"
+                size_hint: .5, .09
+                hint_text:"Re-enter pin"
+                pos_hint:{'center_x':.53, 'center_y':.55}
+                font_size: dp(25)
+                on_text:
+                    app.pin_verify(self)
+            MDRaisedButton:
+                id:l
+                text: "Create"
+                size_hint: .4, .06
+                pos_hint:{'center_x':.65, 'center_y':2}
+                on_release:
+                    app.pin_save()
 
     MDScreen:
         name:"login"
         FloatLayout:
+            Deco:
+                size: app.size_x/1.2, app.size_y/2.2
+                pos_hint:{"center_x":.5,"center_y":.6}
             MDLabel:
+                text:"Login sims"
                 halign:"center"
-                text:"Welcome to bla bla bla"
-                pos_hint:{"center_x":.5, "center_y":.9}
-
-            MDLabel:
-                halign:"center"
-                text:app.status
-                pos_hint:{"center_x":.5, "center_y":.75}
-
+                theme_text_color: "Custom"
+                font_style:"H4"
+                text_color:36/255, 146/255, 255/255, 1
+                pos_hint:{"center_x":.5,"center_y":.75}
+                font_name:"components/fonts/Gill Sans.otf"
+            MDTextField:
+                id:reg
+                mode: "rectangle"
+                size_hint: .6, .09
+                hint_text:"Reg Number"
+                pos_hint:{'center_x':.53, 'center_y':.65}
+                font_size: dp(20)
+            MDTextField:
+                id:pass_word
+                mode: "rectangle"
+                size_hint: .6, .09
+                hint_text:"Password"
+                pos_hint:{'center_x':.53, 'center_y':.55}
+                font_size: dp(23)
             MDRaisedButton:
-                halign:"center"
-                text:"Check SIMS Connection"
-                pos_hint:{"center_x":.5, "center_y":.65}
+                id:lgs
+                text: "Login"
+                size_hint: .4, .06
+                pos_hint:{'center_x':.65, 'center_y':.45}
                 on_release:
-                    app.ping_sims
+                    app.login_verify(reg.text, pass_word.text)
+
+    MDScreen:
+        name:"login_view"
+        FloatLayout:
+            Deco:
+                size: app.size_x/1.2, app.size_y/2.2
+                pos_hint:{"center_x":.5,"center_y":.6}
+            MDLabel:
+                text:"Login"
+                halign:"center"
+                theme_text_color: "Custom"
+                font_style:"H3"
+                text_color:36/255, 146/255, 255/255, 1
+                pos_hint:{"center_x":.5,"center_y":.75}
+                font_name:"components/fonts/Gill Sans.otf"
+            MDLabel:
+                text:"Enter your passcode"
+                halign:"center"
+                font_style:"Caption"
+                text_color:36/255, 146/255, 255/255, 1
+                pos_hint:{"center_x":.5,"center_y":.7}
+                font_name:"components/fonts/Gill Sans.otf"
+            MDIcon:
+                id:locks
+                icon:"lock"
+                halign:"center"
+                pos_hint:{"center_x":.2,"center_y":.58}
+            NumberOnlyField:
+                id:login_code
+                mode: "rectangle"
+                size_hint: .5, .09
+                hint_text:"Code"
+                password:True
+                pos_hint:{'center_x':.53, 'center_y':.58}
+                font_size: dp(25)
+                on_text:
+                    app.login_view()
+            MDRaisedButton:
+                id:view
+                text: "Login"
+                size_hint: .4, .06
+                #pos_hint:{'center_x':.65, 'center_y':.45}
+                pos_hint:{'center_x':.65, 'center_y':2}
+                on_release:
+                    app.screen_capture("results")
+
+<ResultCard@MDCard>:
+    adaptive_height:True
+    md_bg_color:214/255, 223/255, 232/255, 1
+    size_hint:None, None
+    size:app.size_x/1.5, app.size_y/11
+    radius:10
+    ripple_color:.9, .9, .95, 1
+    ripple_behavior: True
+    name:""
+    on_release:
+        print(self.id)
+        app.display_results(self.id)
+    FloatLayout:
+        MDLabel:
+            halign:"left"
+            text:root.name
+            font_size:"13sp"
+            height: self.texture_size[1]
+            width: self.texture_size[1]
+            pos_hint: {'center_x':.55, "center_y":.5}
+            font_name:"components/fonts/Gill Sans.otf"
+
+<Content>:
+    radius:10
+    #height:50
+    size:app.size_x, 150
+    md_bg_color:214/255, 223/255, 232/255, 1
+    adaptive_height:True
+    #adaptive_width:True
+    FloatLayout:
+        MDLabel:
+            text:"GPA:"+" "+root.gpa
+            halign:"left"
+            font_size:"19sp"
+            theme_text_color: "Custom"
+            text_color:26/255, 54/255, 113/255, 1
+            pos_hint:{"center_x":.7,"center_y":.5}
+        MDLabel:
+            text:root.remark
+            halign:"left"
+            font_size:"19sp"
+            theme_text_color: "Custom"
+            text_color:26/255, 54/255, 113/255, 1
+            pos_hint:{"center_x":1.1,"center_y":.5}
+        MDLabel:
+            id:lvnm
+            text:root.level_name
+            pos_hint:{"center_x":9,"center_y":9}
+        MDIconButton:
+            icon:"arrow-right-drop-circle-outline"
+            pos_hint:{"center_x":.92,"center_y":.5}
+            on_release:
+                app.screen_capture("all_results")
+                print(lvnm.text)
+                app.get_all_result(lvnm.text)
+
 
 <Emergency@MDBoxLayout>:
     radius:9
@@ -181,3 +546,16 @@ ScreenManager:
     md_bg_color:80 / 225, 136 / 225, 225 / 225, 1
     adaptive_height:True
     adaptive_width:True
+
+<Deco@MDCard>:
+    orientation: "vertical"
+    md_bg_color: 1, 1, 1, 1
+    padding: "10dp"
+    #spacing: "5dp"
+    border_radius: 3
+    border_color_a: .5
+    radius: [9]
+    size_hint: None, None
+    size: app.size_x/1, app.size_y/2.5
+    focus_behavior: False
+    ripple_behavior: False

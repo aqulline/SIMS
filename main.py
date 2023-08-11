@@ -1,10 +1,18 @@
+import os
+import re
+
 from kivy.base import EventLoop
-from kivy.properties import StringProperty, NumericProperty, BooleanProperty
+from kivy.properties import StringProperty, NumericProperty, BooleanProperty, DictProperty
 from kivymd.app import MDApp
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy import utils
 from kivymd.toast import toast
+import json
+
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.expansionpanel import MDExpansionPanel, MDExpansionPanelTwoLine
+from kivymd.uix.textfield import MDTextField
 
 from notify import NotifyResult as NS
 
@@ -16,20 +24,66 @@ if utils.platform != 'android':
     Window.size = (412, 732)
 
 
+class Content(MDBoxLayout):
+    gpa = StringProperty("")
+    remark = StringProperty("")
+    level_name = StringProperty("")
+
+
+class NumberOnlyField(MDTextField):
+    pat = re.compile('[^0-9]')
+
+    input_type = "number"
+
+    def insert_text(self, substring, from_undo=False):
+
+        pat = self.pat
+
+        if "." in self.text:
+            s = re.sub(pat, "", substring)
+
+        else:
+            s = ".".join([re.sub(pat, "", s) for s in substring.split(".", 1)])
+
+        return super(NumberOnlyField, self).insert_text(s, from_undo=from_undo)
+
 
 class MainApp(MDApp):
+    # app
+    size_x, size_y = Window.size
+    added_widgets = []
+    check = True
+
+    # screens
     screens = ['home']
     screens_size = NumericProperty(len(screens) - 1)
     current = StringProperty(screens[len(screens) - 1])
 
-    size_x, size_y = Window.size
-
+    # status
     status = StringProperty("")
     state = BooleanProperty(False)
 
+    # files
+    read = ""
+    code_bool = False
+    passcode = StringProperty("")
+
+    # user
+    user_id = StringProperty("")
+    user_password = StringProperty("")
+
+    # results data
+    cos_code = StringProperty("")
+    total = StringProperty("")
+    unit = StringProperty("")
+    grade = StringProperty("")
+    ca = StringProperty("")
+    point = StringProperty("")
+    remark = StringProperty("")
+    se = StringProperty("")
+
     def on_start(self):
         self.keyboard_hooker()
-
 
     def keyboard_hooker(self, *args):
         EventLoop.window.bind(on_keyboard=self.hook_keyboard)
@@ -49,8 +103,158 @@ class MainApp(MDApp):
             toast('Press Home button!')
             return True
 
-    def build(self):
-        pass
+    def pin_verify(self, id):
+        code = self.root.ids.pin
+        code1 = id.text
+        lp = self.root.ids.l
+        if code.text != code1:
+            code.password = True
+            id.password = True
+            self.code_bool = False
+            return True
+        elif code.text == code1:
+            id.error = False
+            code.password = False
+            id.password = False
+            self.code_bool = True
+            lp.pos_hint = {'center_x': .65, 'center_y': .45}
+            return False
+
+    def pin_save(self):
+        if self.code_bool:
+            code = self.root.ids.pin
+            self.passcode = code.text
+            with open("register.txt", "w") as fl:
+                fl.write(self.passcode)
+            fl.close()
+            sm = self.root
+            sm.current = "login_view"
+
+        if not self.code_bool:
+            toast("Pin not Match!")
+
+    def pin_check(self):
+        file_size = os.path.getsize("register.txt")
+        if file_size == 0:
+            sm = self.root
+            sm.current = "register_code"
+        else:
+            sm = self.root
+            sm.current = "login_view"
+
+    def login_view(self):
+        with open("register.txt", "r") as fl:
+            read = fl.readlines()
+            self.read = read[0]
+            cd = self.root.ids.login_code
+            lk = self.root.ids.locks
+            lg = self.root.ids.view
+            if cd.text == self.read:
+                toast("Succes!")
+                cd.password = False
+                lk.icon = "lock-open-variant"
+                lg.pos_hint = {'center_x': .65, 'center_y': .45}
+            else:
+                cd.password = True
+                lk.icon = "lock"
+                lg.pos_hint = {'center_x': .65, 'center_y': 2}
+
+    def login_verify(self, reg, password):
+        if reg != "" and password != "":
+            if self.state:
+                if NS.Session(NS(), reg, password):
+                    self.register_user(reg, password)
+                else:
+                    print("Not")
+        else:
+            toast("Fill required space!")
+
+    def register_user(self, name, code):
+        with open("user.json", "w") as file:
+            data = {"reg": name, "password": code}
+            data_dump = json.dumps(data, indent=6)
+            file.write(data_dump)
+            file.close()
+            self.pin_check()
+
+    def login_check(self):
+        file_size = os.path.getsize("user.json")
+        if file_size == 0:
+            sm = self.root
+            sm.current = "login"
+        else:
+            data = self.load("user.json")
+            self.user_id, self.user_password = data["reg"], data["password"]
+            if self.state:
+                NS.Session(NS(), self.user_id, self.user_password)
+            sm = self.root
+            sm.current = "login_view"
+
+    def offline_results(self):
+        NS.load_offline(NS())
+        for i in range(NS.list_gpa_offline.__len__()):
+            Content.gpa = str(NS.list_gpa_offline[i])
+            Content.remark = str(NS.list_remark_offline[i])
+            Content.level_name = str(NS.list_cos_offline[i])
+            Panel = MDExpansionPanel(
+                icon="components/icons/sim.png",
+                content=Content(),
+                panel_cls=MDExpansionPanelTwoLine(
+                    text=str(NS.list_cos_offline[i].split("-")[0].replace("::", "")),
+                    secondary_text=NS.list_cos_offline[i].split("-")[1],
+                )
+            )
+            self.root.ids.box.add_widget(Panel)
+            self.added_widgets.append(Panel)
+        print(self.added_widgets)
+
+    def add_ddt(self):
+        if self.check:
+            self.clear_widgets()
+            self.offline_results()
+            self.check = False
+
+    def clear_widgets(self):
+        map = self.root.ids.box
+        for widget in self.added_widgets:
+            print(widget.icon)
+            map.remove_widget(widget)
+        self.added_widgets = []
+
+    def refresh(self):
+        if self.state:
+            NS.Session(NS(), self.user_id, self.user_password)
+            self.add_ddt()
+
+    def get_all_result(self, name):
+        data = self.load("data/all_results.json")
+        print(data[name])
+        self.data = data[name]
+        self.display_result(data[name])
+
+    def display_result(self, name):
+        self.root.ids.result.data = {}
+        for i in name.keys():
+            self.root.ids.result.data.append(
+                {
+                    "viewclass": "ResultCard",
+                    "name": name[i]["Course Name"],
+                    "id": i
+                }
+            )
+
+    data = DictProperty({})
+
+    def display_results(self, name):
+        data = self.data
+        self.cos_code = data[name]['Course Code']
+        self.total = data[name]['Total']
+        self.unit = data[name]['Unit']
+        self.grade = data[name]['Grade']
+        self.ca = data[name]['CA']
+        self.point = data[name]['Point']
+        self.remark = data[name]['Remark']
+        self.se = data[name]['SE']
 
     def run_sims(self):
 
@@ -121,6 +325,11 @@ class MainApp(MDApp):
             toast("network problem!")
             self.status = "network problem!"
 
+    def load(self, data_file_name):
+        with open(data_file_name, "r") as file:
+            initial_data = json.load(file)
+        return initial_data
+
     def screen_capture(self, screen):
         sm = self.root
         sm.current = screen
@@ -142,6 +351,9 @@ class MainApp(MDApp):
         self.screens_size = len(self.screens) - 1
         self.current = self.screens[len(self.screens) - 1]
         self.screen_capture(self.current)
+
+    def build(self):
+        pass
 
 
 MainApp().run()
