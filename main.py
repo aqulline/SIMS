@@ -1,7 +1,10 @@
 import os
 import re
+import threading
 
+from kivy.animation import Animation
 from kivy.base import EventLoop
+from kivy.metrics import dp
 from kivy.properties import StringProperty, NumericProperty, BooleanProperty, DictProperty
 from kivymd.app import MDApp
 from kivy.core.window import Window
@@ -11,9 +14,12 @@ from kivymd.toast import toast
 import json
 
 from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.button import MDFlatButton, MDRaisedButton
 from kivymd.uix.expansionpanel import MDExpansionPanel, MDExpansionPanelTwoLine
+from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.textfield import MDTextField
 
+import network
 from notify import NotifyResult as NS
 
 Window.keyboard_anim_args = {"d": .2, "t": "linear"}
@@ -28,6 +34,7 @@ class Content(MDBoxLayout):
     gpa = StringProperty("")
     remark = StringProperty("")
     level_name = StringProperty("")
+
 
 
 class NumberOnlyField(MDTextField):
@@ -166,6 +173,8 @@ class MainApp(MDApp):
                     self.register_user(reg, password)
                 else:
                     print("Not")
+            else:
+                self.snack_bar()
         else:
             toast("Fill required space!")
 
@@ -208,10 +217,18 @@ class MainApp(MDApp):
             self.added_widgets.append(Panel)
         print(self.added_widgets)
 
+    def get_cos_name(self, name):
+        self.root.ids.cos.text = name
+
     def add_ddt(self):
         if self.check:
             self.clear_widgets()
-            self.offline_results()
+            if network.ping_net():
+                NS.Session(NS(), self.user_id, self.user_password)
+                self.offline_results()
+                print("net work")
+            else:
+                self.offline_results()
             self.check = False
 
     def clear_widgets(self):
@@ -232,6 +249,8 @@ class MainApp(MDApp):
         self.data = data[name]
         self.display_result(data[name])
 
+    units = StringProperty("Grade")
+
     def display_result(self, name):
         self.root.ids.result.data = {}
         for i in name.keys():
@@ -239,11 +258,48 @@ class MainApp(MDApp):
                 {
                     "viewclass": "ResultCard",
                     "name": name[i]["Course Name"],
+                    "grade": name[i][self.units],
+                    "id": i
+                }
+            )
+
+    def update_units(self):
+        self.root.ids.result.data = {}
+        for i in self.data.keys():
+            if "/" in self.data[i][self.units]:
+                self.data[i][self.units] = self.data[i][self.units].strip().split("/")[0]
+            elif self.units == "Total":
+                self.data[i][self.units] = f"{self.data[i][self.units]}"
+            self.root.ids.result.data.append(
+                {
+                    "viewclass": "ResultCard",
+                    "name": self.data[i]["Course Name"],
+                    "grade": self.data[i][self.units],
                     "id": i
                 }
             )
 
     data = DictProperty({})
+
+    def snack_bar(self):
+        snackbar = Snackbar(
+            text="Check the Sims status first!",
+            bg_color=(26/255, 54/255, 113/255, 1),
+            snackbar_x="10dp",
+            snackbar_y="10dp",
+        )
+        snackbar.size_hint_x = (
+                                       Window.width - (snackbar.snackbar_x * 2)
+                               ) / Window.width
+        snackbar.buttons = [
+            MDRaisedButton(
+                text="Check",
+                theme_text_color="Custom",
+                text_color=(1, 1, 1, 1),
+                on_release=lambda x: self.screen_capture("check")
+            )
+        ]
+        snackbar.open()
 
     def display_results(self, name):
         data = self.data
@@ -259,6 +315,7 @@ class MainApp(MDApp):
     def run_sims(self):
 
         if self.state:
+            print(self.state)
             from web import WebViews as WV
             WV.url = 'https://sims.nit.ac.tz/index.php/dashboard'
             Clock.schedule_once(WV.create_webview, 0)
@@ -297,9 +354,10 @@ class MainApp(MDApp):
 
     def ping_sims(self, *kwargs):
         import requests
+
+
         try:
             code = requests.get("https://sims.nit.ac.tz/index.php/view_result")
-
             print(code.status_code)
             if code.status_code == 200:
                 self.status = "Available"
@@ -311,7 +369,8 @@ class MainApp(MDApp):
 
                 self.state = True
 
-                NS.Get_data(NS())
+                thread = threading.Thread(target=NS.Get_data, args=(NS(),))
+                thread.start()
 
             else:
                 self.status = "Not Available"
@@ -321,6 +380,7 @@ class MainApp(MDApp):
                 icon.text_color = 1, 0, 0, .7
 
                 leash.md_bg_color = 1, 0, 0, .7
+
         except:
             toast("network problem!")
             self.status = "network problem!"
@@ -329,6 +389,9 @@ class MainApp(MDApp):
         with open(data_file_name, "r") as file:
             initial_data = json.load(file)
         return initial_data
+
+    def toast_this(self, name):
+        toast(name)
 
     def screen_capture(self, screen):
         sm = self.root

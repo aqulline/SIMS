@@ -95,6 +95,8 @@ ScreenManager:
 
     MDScreen:
         name:"check"
+        on_enter:
+            app.toast_this("PRESS THIS!")
         FloatLayout:
             Front:
                 id:valid
@@ -202,11 +204,6 @@ ScreenManager:
                     size_hint:.1, .1
                     font_name:"components/fonts/Gill Sans.otf"
                     width: self.texture_size[1]
-                MDIconButton:
-                    icon:"refresh"
-                    pos_hint:{"center_x":.8}
-                    on_release:
-                        app.refresh()
             ScrollView:
                 pos_hint:{"top":.92}
                 MDGridLayout:
@@ -217,133 +214,82 @@ ScreenManager:
     MDScreen:
         name:"all_results"
         FloatLayout:
-            FloatLayout:
-                pos_hint:{'center_x':.5, 'center_y':.56}
-                Front:
-                    pos_hint:{'center_x':.5, 'center_y':.73}
-                    size:app.size_x/1.1,app.size_y/2.7
-                MDLabel:
-                    text:app.cos_code
-                    halign:"left"
-                    font_size:"25sp"
-                    pos_hint:{"center_x":.6, "center_y":.88}
-                    font_name:"components/fonts/Gill Sans.otf"
-                    theme_text_color: "Custom"
-                    text_color: 1, 1, 1, 1
-                MDLabel:
-                    text:"Total:"
-                    halign:"center"
-                    font_size:"20sp"
-                    pos_hint:{"center_x":.7, "center_y":.88}
-                    font_name:"components/fonts/Gill Sans.otf"
-                MDLabel:
-                    text:app.total
-                    halign:"center"
-                    font_size:"22sp"
-                    pos_hint:{"center_x":.82, "center_y":.88}
-                    font_name:"components/fonts/Gill Sans.otf"
-                    theme_text_color: "Custom"
-                    text_color: 1, 1, 1, 1
-                MDLabel:
-                    text:"Unit:"
-                    halign:"left"
-                    font_size:"20sp"
-                    pos_hint:{"center_x":.6, "center_y":.8}
-                    font_name:"components/fonts/Gill Sans.otf"
-                MDSeparator:
-                    orientation:"vertical"
-                    pos_hint:{"center_x":.5, "center_y":.73}
-                    width:".7"
-                    size_hint:None, .25
-                    color:1,1,1,1
-                MDLabel:
-                    text:app.unit
-                    halign:"left"
-                    font_size:"22sp"
-                    pos_hint:{"center_x":.73, "center_y":.8}
-                    font_name:"components/fonts/Gill Sans.otf"
-                    theme_text_color: "Custom"
-                    text_color: 1, 1, 1, 1
-                MDLabel:
-                    text:"Grade:"
-                    halign:"center"
-                    font_size:"20sp"
-                    pos_hint:{"center_x":.7, "center_y":.8}
-                    font_name:"components/fonts/Gill Sans.otf"
-                MDLabel:
-                    text:app.grade
-                    halign:"center"
-                    font_size:"22sp"
-                    pos_hint:{"center_x":.83, "center_y":.8}
-                    font_name:"components/fonts/Gill Sans.otf"
-                    theme_text_color: "Custom"
-                    text_color: 1, 1, 1, 1
-                MDLabel:
-                    text:"CA:"
-                    halign:"left"
-                    font_size:"20sp"
-                    pos_hint:{"center_x":.6, "center_y":.7}
-                    font_name:"components/fonts/Gill Sans.otf"
-                MDLabel:
-                    text:app.ca
-                    halign:"left"
-                    font_size:"22sp"
-                    pos_hint:{"center_x":.7, "center_y":.7}
-                    font_name:"components/fonts/Gill Sans.otf"
-                    theme_text_color: "Custom"
-                    text_color: 1, 1, 1, 1
-                MDLabel:
-                    text:"Point:"
-                    halign:"center"
-                    font_size:"20sp"
-                    pos_hint:{"center_x":.7, "center_y":.7}
-                    font_name:"components/fonts/Gill Sans.otf"
-                MDLabel:
-                    text:app.point
-                    halign:"center"
-                    font_size:"22sp"
-                    pos_hint:{"center_x":.82, "center_y":.7}
-                    font_name:"components/fonts/Gill Sans.otf"
-                    theme_text_color: "Custom"
-                    text_color: 1, 1, 1, 1
-                MDLabel:
-                    text:"SE:"
-                    halign:"left"
-                    font_size:"20sp"
-                    pos_hint:{"center_x":.6, "center_y":.6}
-                    font_name:"components/fonts/Gill Sans.otf"
-                MDLabel:
-                    text:app.se
-                    halign:"left"
-                    font_size:"22sp"
-                    pos_hint:{"center_x":.7, "center_y":.6}
-                    font_name:"components/fonts/Gill Sans.otf"
-                    theme_text_color: "Custom"
-                    text_color: 1, 1, 1, 1
-                MDLabel:
-                    text:"Remark:"
-                    halign:"center"
-                    font_size:"20sp"
-                    pos_hint:{"center_x":.65, "center_y":.6}
-                    font_name:"components/fonts/Gill Sans.otf"
-
-                MDLabel:
-                    text:app.remark
-                    halign:"center"
-                    font_size:"22sp"
-                    pos_hint:{"center_x":.85, "center_y":.6}
-                    font_name:"components/fonts/Gill Sans.otf"
-                    theme_text_color: "Custom"
-                    text_color: 1, 1, 1, 1
+            MDLabel:
+                id:cos
+                halign:"left"
+                text:"Grade's"
+                pos_hint:{"center_x":.6,"center_y":.96}
+                font_size:"17sp"
+            MDChip:
+                text: 'Grade'
+                icon: ''
+                color: 36/255, 146/255, 255/255, 1
+                theme_text_color:"Custom"
+                text_color: 1, 1, 1, 1
+                pos_hint:{"center_x":.13,"center_y":.9}
+                on_release:
+                    shower.text = self.text
+                    app.units = self.text
+                    app.update_units()
+            MDChip:
+                text: 'Remark'
+                icon: ''
+                color: 36/255, 146/255, 255/255, 1
+                theme_text_color:"Custom"
+                text_color: 1, 1, 1, 1
+                pos_hint:{"center_x":.13+.22,"center_y":.9}
+                on_release:
+                    shower.text = self.text
+                    app.units = self.text
+                    app.update_units()
+            MDChip:
+                text: 'SE'
+                icon: ''
+                color: 36/255, 146/255, 255/255, 1
+                theme_text_color:"Custom"
+                text_color: 1, 1, 1, 1
+                pos_hint:{"center_x":.13+.41,"center_y":.9}
+                on_release:
+                    shower.text = self.text + "(/60)"
+                    app.units = self.text
+                    app.update_units()
+            MDChip:
+                text: 'CA'
+                icon: ''
+                color: 36/255, 146/255, 255/255, 1
+                theme_text_color:"Custom"
+                text_color: 1, 1, 1, 1
+                pos_hint:{"center_x":.13+.56,"center_y":.9}
+                on_release:
+                    shower.text = self.text+ "(/40)"
+                    app.units = self.text
+                    app.update_units()
+            MDChip:
+                text: 'Total'
+                icon: ''
+                color: 36/255, 146/255, 255/255, 1
+                theme_text_color:"Custom"
+                text_color: 1, 1, 1, 1
+                pos_hint:{"center_x":.13+.73,"center_y":.9}
+                on_release:
+                    shower.text = self.text + "(CA+SE)"
+                    app.units = self.text
+                    app.update_units()
+            MDLabel:
+                id:shower
+                halign:"center"
+                text:"Grade's"
+                pos_hint:{"center_x":.5,"center_y":.83}
+                font_size:"21sp"
 
             RecycleView:
                 id:result
                 key_viewclass: 'viewclass'
                 key_size: 'height'
-                pos_hint:{"top":.58}
+                pos_hint:{"top":.8}
                 RecycleBoxLayout:
                     id:wall
-                    spacing:dp(5)
+                    spacing:dp(10)
                     padding: dp(10)
                     default_size: None, dp(55)
                     default_size_hint: 1, None
@@ -479,17 +425,27 @@ ScreenManager:
     ripple_color:.9, .9, .95, 1
     ripple_behavior: True
     name:""
+    grade:"A"
     on_release:
         print(self.id)
         app.display_results(self.id)
+        app.toast_this(self.id)
     FloatLayout:
         MDLabel:
             halign:"left"
             text:root.name
-            font_size:"13sp"
+            font_size:"15sp"
             height: self.texture_size[1]
             width: self.texture_size[1]
             pos_hint: {'center_x':.55, "center_y":.5}
+            font_name:"components/fonts/Gill Sans.otf"
+        MDLabel:
+            halign:"left"
+            text:root.grade
+            font_size:"18sp"
+            height: self.texture_size[1]
+            width: self.texture_size[1]
+            pos_hint: {'center_x':1.35, "center_y":.5}
             font_name:"components/fonts/Gill Sans.otf"
 
 <Content>:
@@ -525,6 +481,7 @@ ScreenManager:
                 app.screen_capture("all_results")
                 print(lvnm.text)
                 app.get_all_result(lvnm.text)
+                app.get_cos_name(lvnm.text)
 
 
 <Emergency@MDBoxLayout>:
