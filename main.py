@@ -2,9 +2,7 @@ import os
 import re
 import threading
 
-from kivy.animation import Animation
 from kivy.base import EventLoop
-from kivy.metrics import dp
 from kivy.properties import StringProperty, NumericProperty, BooleanProperty, DictProperty
 from kivymd.app import MDApp
 from kivy.core.window import Window
@@ -15,7 +13,9 @@ import json
 
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.button import MDFlatButton, MDRaisedButton
+from kivymd.uix.card import MDCard
 from kivymd.uix.expansionpanel import MDExpansionPanel, MDExpansionPanelTwoLine
+from kivymd.uix.label import MDLabel
 from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.textfield import MDTextField
 
@@ -35,6 +35,10 @@ class Content(MDBoxLayout):
     remark = StringProperty("")
     level_name = StringProperty("")
 
+
+class Invoice(MDCard):
+    name = StringProperty("")
+    icon = StringProperty("cash-multiple")
 
 
 class NumberOnlyField(MDTextField):
@@ -59,6 +63,7 @@ class MainApp(MDApp):
     # app
     size_x, size_y = Window.size
     added_widgets = []
+    chips_color = ['CA', 'SE', 'Total', 'Grade', 'Remark']
     check = True
 
     # screens
@@ -188,6 +193,7 @@ class MainApp(MDApp):
 
     def login_check(self):
         file_size = os.path.getsize("user.json")
+        file_code = os.path.getsize("register.txt")
         if file_size == 0:
             sm = self.root
             sm.current = "login"
@@ -196,26 +202,68 @@ class MainApp(MDApp):
             self.user_id, self.user_password = data["reg"], data["password"]
             if self.state:
                 NS.Session(NS(), self.user_id, self.user_password)
-            sm = self.root
-            sm.current = "login_view"
+            if file_code != 0:
+                sm = self.root
+                sm.current = "login_view"
+            else:
+                sm = self.root
+                sm.current = "register_code"
 
     def offline_results(self):
         NS.load_offline(NS())
-        for i in range(NS.list_gpa_offline.__len__()):
-            Content.gpa = str(NS.list_gpa_offline[i])
-            Content.remark = str(NS.list_remark_offline[i])
-            Content.level_name = str(NS.list_cos_offline[i])
-            Panel = MDExpansionPanel(
-                icon="components/icons/sim.png",
-                content=Content(),
-                panel_cls=MDExpansionPanelTwoLine(
-                    text=str(NS.list_cos_offline[i].split("-")[0].replace("::", "")),
-                    secondary_text=NS.list_cos_offline[i].split("-")[1],
+        if NS.list_gpa_offline.__len__() > 0:
+            for i in range(NS.list_gpa_offline.__len__()):
+                Content.gpa = str(NS.list_gpa_offline[i])
+                Content.remark = str(NS.list_remark_offline[i])
+                Content.level_name = str(NS.list_cos_offline[i])
+                Panel = MDExpansionPanel(
+                    icon="book-multiple-outline",
+                    content=Content(),
+                    panel_cls=MDExpansionPanelTwoLine(
+                        text=str(NS.list_cos_offline[i].split("-")[0].replace("::", "")),
+                        secondary_text=NS.list_cos_offline[i].split("-")[1],
+                    )
                 )
-            )
-            self.root.ids.box.add_widget(Panel)
-            self.added_widgets.append(Panel)
-        print(self.added_widgets)
+                self.root.ids.box.add_widget(Panel)
+                self.added_widgets.append(Panel)
+            print(self.added_widgets)
+        else:
+            Label = MDLabel(text="No Results", halign="center")
+            self.root.ids.box.add_widget(Label)
+
+    def offline_invo(self):
+        NS.load_inv_offline(NS())
+        if NS.invoice_year.__len__() > 0:
+            for i in range(NS.invoice_year.__len__()):
+                Invoice.name = NS.invoice_year[i]
+                Panel = Invoice(name=NS.invoice_year[i])
+                self.root.ids.boxInvo.add_widget(Panel)
+                self.added_widgets.append(Panel)
+            print(self.added_widgets)
+        else:
+            Label = MDLabel(text="No Invo", halign="center")
+            self.root.ids.box.add_widget(Label)
+
+    def get_invoice_data(self, year):
+        data_list = NS.get_year_data(NS(), year)
+        self.display_invoice(data_list)
+
+    year_holder = StringProperty("")
+    def display_invoice(self, data):
+        self.root.ids.invoices.data = {}
+        for i in data:
+            for x, y in i.items():
+                self.root.ids.invoices.data.append(
+                    {
+                        "viewclass": "Invoices",
+                        "number": y["nvoiceNo"],
+                        "control": y["Control Number"],
+                        "invoice_amount": y["Invoice"],
+                        "paid": y["Amount"],
+                        "balance": y["Paid"],
+                        "head": y["Description"]
+                    }
+                )
 
     def get_cos_name(self, name):
         self.root.ids.cos.text = name
@@ -263,6 +311,16 @@ class MainApp(MDApp):
                 }
             )
 
+    def update_color(self, name):
+        re = self.root.ids.results
+        for child in re.children:
+            if child.ids:
+                for _ in self.chips_color:
+                    if child.text == name.text:
+                        child.color = 180 / 255, 146 / 255, 255 / 255, 1
+                    else:
+                        child.color = 36 / 255, 146 / 255, 255 / 255, 1
+
     def update_units(self):
         self.root.ids.result.data = {}
         for i in self.data.keys():
@@ -284,7 +342,7 @@ class MainApp(MDApp):
     def snack_bar(self):
         snackbar = Snackbar(
             text="Check the Sims status first!",
-            bg_color=(26/255, 54/255, 113/255, 1),
+            bg_color=(26 / 255, 54 / 255, 113 / 255, 1),
             snackbar_x="10dp",
             snackbar_y="10dp",
         )
@@ -354,8 +412,6 @@ class MainApp(MDApp):
 
     def ping_sims(self, *kwargs):
         import requests
-
-
         try:
             code = requests.get("https://sims.nit.ac.tz/index.php/view_result")
             print(code.status_code)
@@ -384,6 +440,14 @@ class MainApp(MDApp):
         except:
             toast("network problem!")
             self.status = "network problem!"
+            icon = self.root.ids.status_icon
+            leash = self.root.ids.back_leash
+            sts = self.root.ids.status
+            icon.icon = "wifi"
+            icon.text_color = 1, 0, 0, .7
+            sts.text_color = 1, 0, 0, .7
+
+            leash.md_bg_color = 1, 0, 0, .7
 
     def load(self, data_file_name):
         with open(data_file_name, "r") as file:
