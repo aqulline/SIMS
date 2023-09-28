@@ -65,6 +65,7 @@ class MainApp(MDApp):
     added_widgets = []
     chips_color = ['CA', 'SE', 'Total', 'Grade', 'Remark']
     check = True
+    loged_var = StringProperty("")
 
     # screens
     screens = ['home']
@@ -191,6 +192,16 @@ class MainApp(MDApp):
             file.close()
             self.pin_check()
 
+    def files_check(self):
+        file_size = os.path.getsize("user.json")
+        if file_size == 0:
+            sm = self.root
+            sm.current = "login"
+            return False
+        else:
+            self.screen_capture("offline_invo")
+            return True
+
     def login_check(self):
         file_size = os.path.getsize("user.json")
         file_code = os.path.getsize("register.txt")
@@ -208,6 +219,12 @@ class MainApp(MDApp):
             else:
                 sm = self.root
                 sm.current = "register_code"
+
+    def login_transfer(self, name):
+        if name == "offline_invo":
+            self.offline_invo()
+        else:
+            self.screen_capture("results")
 
     def offline_results(self):
         NS.load_offline(NS())
@@ -231,24 +248,30 @@ class MainApp(MDApp):
             Label = MDLabel(text="No Results", halign="center")
             self.root.ids.box.add_widget(Label)
 
+    invo_once = BooleanProperty(False)
+
     def offline_invo(self):
-        NS.load_inv_offline(NS())
-        if NS.invoice_year.__len__() > 0:
-            for i in range(NS.invoice_year.__len__()):
-                Invoice.name = NS.invoice_year[i]
-                Panel = Invoice(name=NS.invoice_year[i])
-                self.root.ids.boxInvo.add_widget(Panel)
-                self.added_widgets.append(Panel)
-            print(self.added_widgets)
-        else:
-            Label = MDLabel(text="No Invo", halign="center")
-            self.root.ids.box.add_widget(Label)
+        if self.files_check():
+            if not self.invo_once:
+                self.invo_once = True
+                NS.load_inv_offline(NS())
+                if NS.invoice_year.__len__() > 0:
+                    for i in range(NS.invoice_year.__len__()):
+                        Invoice.name = NS.invoice_year[i]
+                        Panel = Invoice(name=NS.invoice_year[i])
+                        self.root.ids.boxInvo.add_widget(Panel)
+                        self.added_widgets.append(Panel)
+                    print(self.added_widgets)
+                else:
+                    Label = MDLabel(text="No Invo", halign="center")
+                    self.root.ids.box.add_widget(Label)
 
     def get_invoice_data(self, year):
         data_list = NS.get_year_data(NS(), year)
         self.display_invoice(data_list)
 
     year_holder = StringProperty("")
+
     def display_invoice(self, data):
         self.root.ids.invoices.data = {}
         for i in data:

@@ -174,7 +174,7 @@ ScreenManager:
             Front:
                 pos_hint:{'center_x':.7, 'center_y':.7}
                 on_release:
-                    app.screen_capture("offline_invo")
+                    app.loged_var = "offline_invo"
                     app.offline_invo()
                 MDIcon:
                     icon:"format-list-checkbox"
@@ -191,6 +191,7 @@ ScreenManager:
             Front:
                 pos_hint:{'center_x':.7, 'center_y':.4}
                 on_release:
+                    app.loged_var = "results"
                     app.login_check()
                 MDIcon:
                     icon:"clipboard-text-outline"
@@ -505,7 +506,7 @@ ScreenManager:
                 #pos_hint:{'center_x':.65, 'center_y':.45}
                 pos_hint:{'center_x':.65, 'center_y':2}
                 on_release:
-                    app.screen_capture("results")
+                    app.login_transfer(app.loged_var)
                     login_code.text= ""
 
 <ResultCard@MDCard>:
@@ -567,9 +568,12 @@ ScreenManager:
             font_name:"components/fonts/Gill Sans.otf"
         MDLabel:
             halign:"center"
+            font_size:sp(18)
             text:root.control
-            pos_hint:{'center_x':.15, 'center_y':.4}
-            font_name:"components/fonts/Gill Sans.otf"
+            pos_hint:{'center_x':.17, 'center_y':.4}
+            font_name:"components/fonts/Gill Sans Bold.otf"
+            markup:True
+            bold:True
         MDLabel:
             halign:"center"
             text:"Invoice Amount"
@@ -601,6 +605,11 @@ ScreenManager:
             text:root.balance + "/="
             font_size:"20sp"
             pos_hint:{'center_x':.8, 'center_y':.15}
+            font_name:"components/fonts/Gill Sans.otf"
+        MDLabel:
+            halign:"center"
+            text:"100%"
+            pos_hint:{'center_x':.15, 'center_y':.15}
             font_name:"components/fonts/Gill Sans.otf"
 
 
