@@ -5,22 +5,24 @@ ScreenManager:
     transition:sm.FadeTransition(duration=.0)
     MDScreen:
         name:'home'
+        MDTopAppBar:
+            title: "Home"
+            elevation:2
+            pos_hint: {"top": 1}
+            md_bg_color: 214/255, 223/255, 232/255, 1
+            specific_text_color: "#4a4939"
         FloatLayout:
             orientation:'vertical'
-            MDIconButton:
-                icon:"segment"
-                pos_hint:{"center_x":.9,"center_y":.95}
-                user_font_size:"35sp"
-                on_release:
-                    app.screen_capture("select")
             Front:
                 pos_hint:{'center_x':.5, 'center_y':.7}
                 on_release:
                     app.screen_capture("check")
-                MDIcon:
-                    icon:"wifi-remove"
-                    halign:"center"
-                    font_size:"70sp"
+                FloatLayout:
+                    MDIcon:
+                        icon:"wifi-remove"
+                        #halign:"center"
+                        font_size:"70sp"
+                        pos_hint: {"center_x": .5, "center_y": .5}
 
             MDLabel:
                 halign:"center"
@@ -32,10 +34,12 @@ ScreenManager:
                 pos_hint:{'center_x':.5, 'center_y':.4}
                 on_release:
                     app.screen_capture("select")
-                MDIcon:
-                    icon:"door-open"
-                    halign:"center"
-                    font_size:"70sp"
+                FloatLayout:
+                    MDIcon:
+                        icon:"door-open"
+                        halign:"center"
+                        font_size:"70sp"
+                        pos_hint: {"center_x": .5, "center_y": .5}
 
             MDLabel:
                 halign:"center"
@@ -47,25 +51,24 @@ ScreenManager:
 
     MDScreen:
         name:"results"
+        MDTopAppBar:
+            title: "Result Select"
+            elevation:2
+            pos_hint: {"top": 1}
+            md_bg_color: 214/255, 223/255, 232/255, 1
+            specific_text_color: "#4a4939"
         FloatLayout:
-            Emergency:
-                pos_hint:{ "center_y":.96}
-                MDLabel:
-                    halign:"left"
-                    text:"SELECT"
-                    pos_hint:{"center_x":.6}
-                    font_size:"18sp"
-                    font_name:"components/fonts/Gill Sans.otf"
-
             Front:
                 pos_hint:{'center_x':.3, 'center_y':.65}
                 on_release:
                     orientation.set_sensor(mode='any')
                     app.run_results()
-                MDIcon:
-                    icon:"clipboard-text-outline"
-                    halign:"center"
-                    font_size:"70sp"
+                FloatLayout:
+                    MDIcon:
+                        icon:"clipboard-text-outline"
+                        halign:"center"
+                        font_size:"70sp"
+                        pos_hint:{'center_x':.5, 'center_y':.5}
             MDLabel:
                 halign:"center"
                 text: " View in SIMS"
@@ -78,10 +81,12 @@ ScreenManager:
                 on_release:
                     app.screen_capture("offline_result")
                     app.add_ddt()
-                MDIcon:
-                    icon:"network-strength-off-outline"
-                    halign:"center"
-                    font_size:"70sp"
+                FloatLayout:
+                    MDIcon:
+                        icon:"network-strength-off-outline"
+                        halign:"center"
+                        font_size:"70sp"
+                        pos_hint:{'center_x':.5, 'center_y':.5}
             MDLabel:
                 halign:"center"
                 text: "View offline"
@@ -121,33 +126,36 @@ ScreenManager:
                 on_release:
                     app.wait_ping()
                     valid.pos_hint = {'center_x':.5, 'center_y':.85}
-                MDIcon:
-                    id:status_icon
-                    icon:"wifi-alert"
-                    halign:"center"
-                    font_size:"170sp"
-                    theme_text_color: "Custom"
-                    text_color: .75, .75, .75, 1
+                FloatLayout:
+                    MDIcon:
+                        id:status_icon
+                        icon:"wifi-alert"
+                        halign:"center"
+                        font_size:"170sp"
+                        theme_text_color: "Custom"
+                        text_color: .75, .75, .75, 1
+                        pos_hint:{'center_x':.5, 'center_y':.5}
     MDScreen:
         name:"select"
+        MDTopAppBar:
+            title: "Select"
+            elevation:2
+            pos_hint: {"top": 1}
+            md_bg_color: 214/255, 223/255, 232/255, 1
+            specific_text_color: "#4a4939"
+            font_name:"components/fonts/Gill Sans.otf"
         FloatLayout:
-            Emergency:
-                pos_hint:{ "center_y":.96}
-                MDLabel:
-                    halign:"left"
-                    text:"SELECT"
-                    pos_hint:{"center_x":.6}
-                    font_size:"18sp"
-                    font_name:"components/fonts/Gill Sans.otf"
             Front:
                 pos_hint:{'center_x':.3, 'center_y':.7}
                 on_release:
                     orientation.set_sensor(mode='any')
                     app.run_create_invoice()
-                MDIcon:
-                    icon:"clipboard-edit-outline"
-                    halign:"center"
-                    font_size:"70sp"
+                FloatLayout:
+                    MDIcon:
+                        icon:"clipboard-edit-outline"
+                        halign:"center"
+                        font_size:"70sp"
+                        pos_hint:{'center_x':.5, 'center_y':.5}
             MDLabel:
                 halign:"center"
                 text: "Create Invoice"
@@ -160,10 +168,12 @@ ScreenManager:
                 on_release:
                     orientation.set_sensor(mode='any')
                     app.run_sims()
-                MDIcon:
-                    icon:"login"
-                    halign:"center"
-                    font_size:"70sp"
+                FloatLayout:
+                    MDIcon:
+                        icon:"login"
+                        halign:"center"
+                        font_size:"70sp"
+                        pos_hint:{'center_x':.5, 'center_y':.5}
 
             MDLabel:
                 halign:"center"
@@ -176,10 +186,12 @@ ScreenManager:
                 on_release:
                     app.loged_var = "offline_invo"
                     app.offline_invo()
-                MDIcon:
-                    icon:"format-list-checkbox"
-                    halign:"center"
-                    font_size:"70sp"
+                FloatLayout:
+                    MDIcon:
+                        icon:"format-list-checkbox"
+                        halign:"center"
+                        font_size:"70sp"
+                        pos_hint:{'center_x':.5, 'center_y':.5}
             MDLabel:
                 halign:"center"
                 text: "Invoice List"
@@ -193,10 +205,12 @@ ScreenManager:
                 on_release:
                     app.loged_var = "results"
                     app.login_check()
-                MDIcon:
-                    icon:"clipboard-text-outline"
-                    halign:"center"
-                    font_size:"70sp"
+                FloatLayout:
+                    MDIcon:
+                        icon:"clipboard-text-outline"
+                        halign:"center"
+                        font_size:"70sp"
+                        pos_hint:{'center_x':.5, 'center_y':.5}
             MDLabel:
                 halign:"center"
                 text: "View Result"
@@ -207,18 +221,13 @@ ScreenManager:
                 pos_hint:{'center_x':.7, 'center_y':.29}
     MDScreen:
         name:"offline_invo"
+        MDTopAppBar:
+            title: "Invoice's"
+            elevation:2
+            pos_hint: {"top": 1}
+            md_bg_color: 214/255, 223/255, 232/255, 1
+            specific_text_color: "#4a4939"
         FloatLayout:
-            Emergency:
-                pos_hint:{ "center_y":.96}
-                orientation:"horizontal"
-                MDLabel:
-                    halign:"center"
-                    text:"Invoice List"
-                    pos_hint:{"center_x":1, "center_y":.5}
-                    font_size:"18sp"
-                    size_hint:.1, .1
-                    font_name:"components/fonts/Gill Sans.otf"
-                    width: self.texture_size[1]
             ScrollView:
                 pos_hint:{"top":.8, "right":1.2}
                 MDGridLayout:
@@ -229,22 +238,17 @@ ScreenManager:
 
     MDScreen:
         name:"offline_invoices"
+        MDTopAppBar:
+            title: "Invoice List"
+            elevation:2
+            pos_hint: {"top": 1}
+            md_bg_color: 214/255, 223/255, 232/255, 1
+            specific_text_color: "#4a4939"
         FloatLayout:
-            Emergency:
-                pos_hint:{ "center_y":.96}
-                orientation:"horizontal"
-                MDLabel:
-                    halign:"center"
-                    text:"Invoice List"
-                    pos_hint:{"center_x":1, "center_y":.5}
-                    font_size:"18sp"
-                    size_hint:.1, .1
-                    font_name:"components/fonts/Gill Sans.otf"
-                    width: self.texture_size[1]
             MDLabel:
                 halign:"center"
                 text:app.year_holder
-                pos_hint:{"center_x":.3, "center_y":.85}
+                pos_hint:{"center_x":.2, "center_y":.85}
                 font_size:"20sp"
                 font_name:"components/fonts/Gill Sans.otf"
             RecycleView:
@@ -266,6 +270,7 @@ ScreenManager:
     MDScreen:
         name:"offline_result"
         FloatLayout:
+            id:noresult
             Emergency:
                 pos_hint:{ "center_y":.96}
                 orientation:"horizontal"
@@ -554,30 +559,31 @@ ScreenManager:
     balance: ""
     head:""
     pos_hint:{"center_x":.5,"center_y":.5}
-    md_bg_color:36/255, 146/255, 255/255, 1
+    md_bg_color: 214/255, 223/255, 232/255, 1
     FloatLayout:
         MDLabel:
             halign:"center"
             text:root.head
+            font_size:sp(18)
             pos_hint:{'center_x':.5, 'center_y':.9}
             font_name:"components/fonts/Gill Sans.otf"
         MDLabel:
             halign:"center"
             text:"Control Number"
-            pos_hint:{'center_x':.15, 'center_y':.7}
+            pos_hint:{'center_x':.155, 'center_y':.62}
             font_name:"components/fonts/Gill Sans.otf"
         MDLabel:
             halign:"center"
             font_size:sp(18)
             text:root.control
             pos_hint:{'center_x':.17, 'center_y':.4}
-            font_name:"components/fonts/Gill Sans Bold.otf"
+            font_name:"components/fonts/Gill Sans.otf"
             markup:True
             bold:True
         MDLabel:
             halign:"center"
             text:"Invoice Amount"
-            pos_hint:{'center_x':.5, 'center_y':.7}
+            pos_hint:{'center_x':.5, 'center_y':.62}
             font_name:"components/fonts/Gill Sans.otf"
         MDLabel:
             halign:"center"
@@ -587,7 +593,7 @@ ScreenManager:
         MDLabel:
             halign:"center"
             text:"Paid Amount"
-            pos_hint:{'center_x':.8, 'center_y':.7}
+            pos_hint:{'center_x':.8, 'center_y':.62}
             font_name:"components/fonts/Gill Sans.otf"
         MDLabel:
             halign:"center"
@@ -595,7 +601,7 @@ ScreenManager:
             pos_hint:{'center_x':.8, 'center_y':.4}
             font_name:"components/fonts/Gill Sans.otf"
         MDSeparator:
-            pos_hint:{"center_x":.5, "center_y":.55}
+            pos_hint:{"center_x":.5, "center_y":.8}
             orientation:"horizontal"
             color:1, 1, 1, 1
             width:.5
@@ -605,11 +611,6 @@ ScreenManager:
             text:root.balance + "/="
             font_size:"20sp"
             pos_hint:{'center_x':.8, 'center_y':.15}
-            font_name:"components/fonts/Gill Sans.otf"
-        MDLabel:
-            halign:"center"
-            text:"100%"
-            pos_hint:{'center_x':.15, 'center_y':.15}
             font_name:"components/fonts/Gill Sans.otf"
 
 
@@ -629,7 +630,7 @@ ScreenManager:
     focus_behavior: False
     ripple_color:.9, .9, .95, 1
     ripple_behavior: True
-    elevation:20
+    elevation:2
     on_release:
         print(root.name)
         app.year_holder = root.name
@@ -638,11 +639,10 @@ ScreenManager:
     FloatLayout:
         MDIcon:
             icon:root.icon
-            badge_icon:"cat"
             font_size:"30sp"
             theme_text_color:"Custom"
             text_color: 1, .5, .5, 1
-            pos_hint:{"center_x":.5,"center_y":.5}
+            pos_hint:{"center_x":.1,"center_y":.5}
         MDLabel:
             text:root.name
             font_size:"20sp"
@@ -702,18 +702,24 @@ ScreenManager:
 <Front@MDCard>:
     radius:20
     #height:240
-    elevation:9
+    elevation:3
     size_hint:None, None
+    shadow_softness:2
     size:app.size_x/3,app.size_y/6
     md_bg_color:80 / 225, 136 / 225, 225 / 225, 1
     adaptive_height:True
+    style:"outlined"
     adaptive_width:True
+
+
 
 <Deco@MDCard>:
     orientation: "vertical"
     md_bg_color: 1, 1, 1, 1
     padding: "10dp"
     #spacing: "5dp"
+    elevation:3
+    shadow_softness:10
     border_radius: 3
     border_color_a: .5
     radius: [9]

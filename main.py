@@ -4,6 +4,7 @@ import threading
 
 from kivy.base import EventLoop
 from kivy.properties import StringProperty, NumericProperty, BooleanProperty, DictProperty
+from kivy.uix.image import Image
 from kivymd.app import MDApp
 from kivy.core.window import Window
 from kivy.clock import Clock
@@ -12,7 +13,7 @@ from kivymd.toast import toast
 import json
 
 from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.button import MDFlatButton, MDRaisedButton
+from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.card import MDCard
 from kivymd.uix.expansionpanel import MDExpansionPanel, MDExpansionPanelTwoLine
 from kivymd.uix.label import MDLabel
@@ -245,8 +246,8 @@ class MainApp(MDApp):
                 self.added_widgets.append(Panel)
             print(self.added_widgets)
         else:
-            Label = MDLabel(text="No Results", halign="center")
-            self.root.ids.box.add_widget(Label)
+            image = Image(source="components/icons/no-data-found.png", pos_hint = {"center_x":.5, "center_y":.5}, size=(500, 500))
+            self.root.ids.noresult.add_widget(image)
 
     invo_once = BooleanProperty(False)
 
